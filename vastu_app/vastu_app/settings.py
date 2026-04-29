@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+
+from django.conf.global_settings import EMAIL_HOST_PASSWORD
 from dotenv import load_dotenv
 
 
@@ -157,7 +159,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'gohelhetvi18@gmail.com'          # your Gmail
-EMAIL_HOST_PASSWORD = 'jzpc cnrr vtdz ycdy'         # App Password (not your Gmail password)
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024  # 20 MB\
