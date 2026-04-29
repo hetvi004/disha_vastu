@@ -1,0 +1,21 @@
+# Python 3.12 base image
+FROM python:3.12
+
+# Working directory set karo
+WORKDIR /app
+
+# Requirements copy karo aur install karo
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Poora project copy karo
+COPY . .
+
+# Static files collect karo
+RUN python vastu_app/manage.py collectstatic --no-input
+
+# Port expose karo
+EXPOSE 8000
+
+# Server start karo
+CMD ["gunicorn", "--chdir", "vastu_app", "--bind", "0.0.0.0:8000", "vastu_app.wsgi"]
