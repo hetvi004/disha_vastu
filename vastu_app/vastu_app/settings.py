@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-ALLOWED_HOSTS = ['dishavastu.pythonanywhere.com','127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['dishavastu-zasu.onrender.com', 'dishavastu.onrender.com', '127.0.0.1', 'localhost']
 # ALLOWED_HOSTS = ['*']
 # settings.py
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
