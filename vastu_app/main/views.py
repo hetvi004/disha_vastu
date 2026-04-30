@@ -446,49 +446,80 @@ def knowledge(request):
 def application_insights(request):
     return render(request, 'application_insights.html')
 
+# //login with otp wala running code
+# def login_view(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         email = request.POST.get('email')
+#
+#         if username and email:
+#             otp = generate_otp()
+#
+#             # ✨ HTML message for email
+#             html_message = f"""
+#             <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
+#                 <h2 style="color: #4A00E0;">🔮 Cosmo-Vastu OTP Verification</h2>
+#                 <p>Hi <strong>{username}</strong>,</p>
+#                 <p>Thank you for signing up at <strong>Cosmo Vastu</strong>!<br>
+#                 Use the following OTP to complete your verification:</p>
+#                 <div style="font-size: 24px; font-weight: bold; color: #4A00E0; margin: 20px 0; letter-spacing: 5px;">
+#                     {otp}
+#                 </div>
+#                 <p>This OTP is valid for a limited time only. Please do not share it with anyone.</p>
+#                 <br>
+#                 <p style="font-size: 13px; color: #777;">© {username} | Cosmo Vastu Team</p>
+#             </div>
+#             """
+#
+#             send_mail(
+#                 subject='Your Cosmo-Vastu OTP',
+#                 message=f'Hello {username}, your OTP is: {otp}',  # fallback plain text
+#                 from_email='your_email@gmail.com',
+#                 recipient_list=[email],
+#                 fail_silently=False,
+#                 html_message=html_message
+#             )
+#
+#             request.session['otp'] = otp
+#             request.session['email'] = email
+#             request.session['username'] = username
+#
+#             return redirect('verify_otp')
+#         else:
+#             return render(request, 'login.html', {'error': 'All fields are required.'})
+#
+#     return render(request, 'login.html')
+
+# new code of login that redirects to the dashboard instead of otp
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
 
         if username and email:
-            otp = generate_otp()
-
-            # ✨ HTML message for email
-            html_message = f"""
-            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
-                <h2 style="color: #4A00E0;">🔮 Cosmo-Vastu OTP Verification</h2>
-                <p>Hi <strong>{username}</strong>,</p>
-                <p>Thank you for signing up at <strong>Cosmo Vastu</strong>!<br>
-                Use the following OTP to complete your verification:</p>
-                <div style="font-size: 24px; font-weight: bold; color: #4A00E0; margin: 20px 0; letter-spacing: 5px;">
-                    {otp}
-                </div>
-                <p>This OTP is valid for a limited time only. Please do not share it with anyone.</p>
-                <br>
-                <p style="font-size: 13px; color: #777;">© {username} | Cosmo Vastu Team</p>
-            </div>
-            """
-
-            send_mail(
-                subject='Your Cosmo-Vastu OTP',
-                message=f'Hello {username}, your OTP is: {otp}',  # fallback plain text
-                from_email='your_email@gmail.com',
-                recipient_list=[email],
-                fail_silently=False,
-                html_message=html_message
+            # User dhundo ya create karo
+            user, created = User.objects.get_or_create(
+                email=email,
+                defaults={'username': username}
             )
 
-            request.session['otp'] = otp
+            # Agar user pehle se hai aur username alag hai toh update karo
+            if not created and user.username != username:
+                user.username = username
+                user.save()
+
+            # Session mein save karo (agar baad mein kaam aaye)
             request.session['email'] = email
             request.session['username'] = username
 
-            return redirect('verify_otp')
+            # Login karke seedha dashboard par bhejo
+            login(request, user)
+            return redirect('dashboard')
+
         else:
             return render(request, 'login.html', {'error': 'All fields are required.'})
 
     return render(request, 'login.html')
-
 
 def verify_otp(request):
     # 1️⃣  Handle POST – जब यूज़र ने 4 डिजिट लिखकर सबमिट किया
